@@ -12,7 +12,9 @@ mod tokens;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if !args[1].trim().is_empty() {
+    if args.len() < 2 {
+        repl();
+    } else if !args[1].trim().is_empty() {
         match interpreter::Interpreter::from_file(&args[1]) {
             Ok(result) => {
                 println!("Result: {}", result);
@@ -21,8 +23,6 @@ fn main() {
                 println!("Error: {}", err);
             }
         }
-    } else {
-        repl();
     }
 }
 
