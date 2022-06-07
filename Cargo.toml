@@ -1,0 +1,9 @@
+[package]
+name = "math_parser"
+version = "0.1.0"
+edition = "2021"
+authors = ["Jwaffled"]
+
+
+[dependencies]
+# No dependencies!
