@@ -144,10 +144,6 @@ impl Parser {
         self.tokens.get(self.current).unwrap().clone()
     }
 
-    fn get_next(&self) -> Token {
-        self.tokens.get(self.current + 1).unwrap().clone()
-    }
-
     fn consume_token(&mut self, token_type: TokenType, message: String) -> Result<Token, String> {
         if self.check(token_type) {
             return Ok(self.advance());

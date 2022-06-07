@@ -1,4 +1,3 @@
-#![allow(dead_code)] // change later, just annoying rn
 #![deny(rust_2018_idioms)]
 
 use interpreter::Compile;

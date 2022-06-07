@@ -18,42 +18,11 @@ pub enum TokenType {
     Eof,
 }
 
-pub enum Operators {
-    Plus,
-    Minus,
-    Star,
-    Slash,
-    Carrot,
-}
-
 impl Display for TokenType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         write!(f, "{:?}", &self)
     }
 }
-
-// #[derive(Debug, Clone)]
-// pub enum TokenValue<'a> {
-//     String(&'a str),
-//     Number(f64),
-// }
-
-// impl TryInto<f64> for TokenValue<'_> {
-//     type Error = String;
-
-//     fn try_into(self) -> Result<f64, Self::Error> {
-//         match self {
-//             TokenValue::Number(num) => Ok(num),
-//             TokenValue::String(_str) => Err(String::from("TokenValue was string, expected f64"))
-//         }
-//     }
-// }
-
-// impl Display for TokenValue<'_> {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-//         write!(f, "{:?}", &self)
-//     }
-// }
 
 #[derive(Clone, Debug)]
 pub struct Token {
