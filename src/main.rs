@@ -2,9 +2,6 @@
 #![deny(rust_2018_idioms)]
 
 use interpreter::Compile;
-use interpreter::Interpreter;
-use parser::Parser;
-use scanner::Scanner;
 use std::io::{self, Write};
 
 mod ast;
@@ -47,25 +44,8 @@ fn repl() {
 }
 
 fn eval_input(input: &str) {
-    let mut scanner = Scanner::new(input);
-    let mut parser: Parser;
-    match scanner.scan_tokens() {
-        Ok(tokens) => {
-            println!("TOKENS: {:?}", tokens);
-            parser = Parser::new(tokens);
-        }
-        Err(err) => {
-            println!("Error occurred when scanning input string: {}", err);
-            return;
-        }
-    }
-    let ast = parser.parse();
-    match ast {
-        Ok(ast) => {
-            println!("Result: {}", Interpreter::from_ast(ast));
-        }
-        Err(str) => {
-            println!("Error occurred when parsing: {}", str);
-        }
+    match interpreter::Interpreter::from_input(input) {
+        Ok(result) => println!("Result: {}", result),
+        Err(err) => println!("Error: {}", err)
     }
 }
