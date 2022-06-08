@@ -6,11 +6,23 @@ pub enum TokenType {
     RightParen,
     Comma,
 
+    // Math
     Plus,
     Minus,
     Star,
     Slash,
     Carrot,
+
+    // Boolean logic
+    Not,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    EqualEqual,
+    NotEqual,
+    And,
+    Or,
 
     Identifier(String),
     Number(f64),

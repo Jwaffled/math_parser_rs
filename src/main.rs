@@ -48,3 +48,11 @@ fn eval_input(input: &str) {
         Err(err) => println!("Error: {}", err)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test() {
+        todo!();
+    }
+}

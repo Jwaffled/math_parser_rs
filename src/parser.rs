@@ -26,7 +26,32 @@ impl Parser {
     }
 
     fn parse_expression(&mut self) -> Result<Node, String> {
-        self.parse_term()
+        self.parse_logic_binary()
+    }
+
+    fn parse_logic_binary(&mut self) -> Result<Node, String> {
+        let mut expr = self.parse_term()?;
+
+        while self.match_token(vec![
+            TokenType::GreaterThan,
+            TokenType::GreaterThanEqual,
+            TokenType::LessThan,
+            TokenType::LessThanEqual,
+            TokenType::EqualEqual,
+            TokenType::NotEqual,
+            TokenType::Or,
+            TokenType::And
+        ]) {
+            let operator = self.previous().token_type;
+            let right = self.parse_term()?;
+            expr = Node::BinaryExpr {
+                operator,
+                rhs: Box::new(right),
+                lhs: Box::new(expr),
+            }
+        }
+
+        Ok(expr)
     }
 
     fn parse_term(&mut self) -> Result<Node, String> {
@@ -78,7 +103,7 @@ impl Parser {
     }
 
     fn parse_unary(&mut self) -> Result<Node, String> {
-        while self.match_token(vec![TokenType::Minus]) {
+        while self.match_token(vec![TokenType::Minus, TokenType::Not]) {
             let operator = self.previous().token_type;
             let expr = self.parse_unary()?;
             return Ok(Node::UnaryExpr {
@@ -96,6 +121,17 @@ impl Parser {
                 TokenType::Number(num) => {
                     self.advance();
                     return Ok(Node::Number(num));
+                }
+                TokenType::Identifier(val) => {
+                    self.advance();
+                    // This should probably be the job of the scanner, but I can't be bothered!
+                    if val == "true" {
+                        return Ok(Node::Boolean(true));
+                    } else if val == "false" {
+                        return Ok(Node::Boolean(false));
+                    } else {
+                        return Err(format!("Identifiers are not supported yet. '{}' on line {}.", val, self.previous().line))
+                    }
                 }
                 TokenType::LeftParen => {
                     self.advance();

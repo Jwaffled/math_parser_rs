@@ -59,6 +59,55 @@ impl<'a> Scanner<'a> {
                 self.number()?;
             }
 
+            '=' => {
+                if self.get_current() == '=' {
+                    self.advance();
+                    self.add_token(TokenType::EqualEqual);
+                } else {
+                    return Err("Expected '=' to follow '=' character.".to_string());
+                }
+            }
+            '<' => {
+                if self.get_current() == '=' {
+                    self.advance();
+                    self.add_token(TokenType::LessThanEqual);
+                } else {
+                    self.add_token(TokenType::LessThan);
+                }
+            }
+            '>' => {
+                if self.get_current() == '=' {
+                    self.advance();
+                    self.add_token(TokenType::GreaterThanEqual);
+                } else {
+                    self.add_token(TokenType::GreaterThan);
+                }
+            }
+            '!' => {
+                if self.get_current() == '=' {
+                    self.advance();
+                    self.add_token(TokenType::NotEqual);
+                } else {
+                    self.add_token(TokenType::Not);
+                }
+            }
+            '&' => {
+                if self.get_current() == '&' {
+                    self.advance();
+                    self.add_token(TokenType::And);
+                } else {
+                    return Err("Expected '&' to follow '&' character.".to_string());
+                }
+            }
+            '|' => {
+                if self.get_current() == '|' {
+                    self.advance();
+                    self.add_token(TokenType::Or)
+                } else {
+                    return Err("Expected '|' to follow '|' character.".to_string());
+                }
+            }
+
             ' ' | '\r' | '\t' => {}
             '\n' => self.line += 1,
             char => {
