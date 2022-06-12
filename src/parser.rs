@@ -9,10 +9,12 @@ pub struct Parser {
     current: usize,
 }
 
+#[inline]
 pub fn parse_from_file(source: &str) -> Result<Node, String> {
     Parser::new(scanner::scan_from_file(source)?).parse()
 }
 
+#[inline]
 pub fn parse_from_input(input: &str) -> Result<Node, String> {
     Parser::new(scanner::scan_from_input(input)?).parse()
 }
@@ -22,10 +24,12 @@ impl Parser {
         Parser { tokens, current: 0 }
     }
 
+    #[inline]
     pub fn parse(&mut self) -> Result<Node, String> {
         self.parse_expression()
     }
 
+    #[inline]
     fn parse_expression(&mut self) -> Result<Node, String> {
         self.parse_logic_binary()
     }
@@ -182,21 +186,22 @@ impl Parser {
         self.tokens.get(self.current).unwrap().clone()
     }
 
-    fn consume_token(&mut self, token_type: TokenType, message: String) -> Result<Token, String> {
+    fn consume_token(&mut self, token_type: TokenType, message: String) -> Result<(), String> {
         if self.check(token_type) {
-            return Ok(self.advance());
+            self.advance();
+            Ok(())
+        } else {
+            Err(message)
         }
-
-        Err(message)
     }
 
-    fn advance(&mut self) -> Token {
+    fn advance(&mut self) {
         if !self.is_at_end() {
             self.current += 1;
         }
-        self.previous()
     }
 
+    #[inline]
     fn previous(&self) -> Token {
         self.tokens.get(self.current - 1).unwrap().clone()
     }
