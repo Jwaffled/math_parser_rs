@@ -40,16 +40,15 @@ impl Eval {
             Node::Number(num) => Ok(Value::Number(*num)),
             Node::Boolean(val) => Ok(Value::Boolean(*val)),
             Node::UnaryExpr { operator, child } => {
-                let child = self.evaluate(child)?;
-                match child {
+                match self.evaluate(child)? {
                     Value::Number(num) => match operator {
-                        TokenType::Minus => return Ok(Value::Number(-num)),
-                        TokenType::Plus => return Ok(Value::Number(num)),
-                        other => return Err(format!("Incompatible operand type (Number) for operation '{}'.", other))
+                        TokenType::Minus => Ok(Value::Number(-num)),
+                        TokenType::Plus => Ok(Value::Number(num)),
+                        other => Err(format!("Incompatible operand type (Number) for operation '{}'.", other))
                     },
                     Value::Boolean(val) => match operator {
-                        TokenType::Not => return Ok(Value::Boolean(!val)),
-                        other => return Err(format!("Incompatible operand type (Boolean) for operation '{}'.", other))
+                        TokenType::Not => Ok(Value::Boolean(!val)),
+                        other => Err(format!("Incompatible operand type (Boolean) for operation '{}'.", other))
                     }
                 }
             }
@@ -82,7 +81,7 @@ impl Eval {
                             other => Err(format!("Cannot apply operator '{}' to two Booleans.", other))
                         }
                     }
-                    (rhs, lhs) => return Err(format!("Left hand and right hand side of the expression are not of the same type. (Operating on '{:?}' and '{:?}')", rhs, lhs))
+                    (rhs, lhs) => Err(format!("Left hand and right hand side of the expression are not of the same type. (Operating on '{:?}' and '{:?}')", rhs, lhs))
                 }
             }
             Node::GroupingExpr { child } => self.evaluate(child),
