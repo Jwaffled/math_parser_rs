@@ -1,6 +1,5 @@
 #![deny(rust_2018_idioms)]
 
-use interpreter::Compile;
 use std::io::{self, Write};
 
 mod ast;
@@ -9,6 +8,8 @@ mod parser;
 mod scanner;
 mod tokens;
 
+use ast::Value;
+
 fn main() {
     let mut args = std::env::args();
     args.next().unwrap(); // ignore args[0]
@@ -16,7 +17,7 @@ fn main() {
     match args.next() {
         Some(file) => {
             if file.trim().is_empty() {
-                match interpreter::Interpreter::from_file(&file) {
+                match Value::from_file(&file) {
                     Ok(result) => println!("Result: {}", result),
                     Err(err) => println!("Error: {}", err),
                 }
@@ -50,7 +51,7 @@ fn repl() {
 }
 
 fn eval_input(input: &str) {
-    match interpreter::Interpreter::from_input(input) {
+    match Value::from_input(input) {
         Ok(result) => println!("Result: {}", result),
         Err(err) => println!("Error: {}", err)
     }
