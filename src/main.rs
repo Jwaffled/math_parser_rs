@@ -28,20 +28,23 @@ fn main() {
 }
 
 fn repl() {
+    let mut buffer = String::new();
+    
     loop {
         print!(">>> ");
         
         io::stdout().flush().expect("Could not flush stdout.");
-        let mut buffer = String::new();
         
         io::stdin()
             .read_line(&mut buffer)
             .expect("Failed to read input.");
         
-        if buffer.trim().is_empty() {
+        let trimmed = buffer.trim();
+        
+        if trimmed.is_empty() {
             continue;
         } else {
-            eval_input(buffer.trim());
+            eval_input(trimmed);
         }
     }
 }
