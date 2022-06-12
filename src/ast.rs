@@ -29,8 +29,8 @@ pub enum Value {
 impl Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Number(num) => write!(f, "{}", num),
-            Boolean(val) => write!(f, "{}", val),
+            Self::Number(num) => write!(f, "{}", num),
+            Self::Boolean(val) => write!(f, "{}", val),
         }
     }
 }

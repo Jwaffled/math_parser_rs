@@ -14,7 +14,7 @@ pub struct Scanner<'a> {
 pub fn scan_from_file(source: &str) -> Result<Vec<Token>, String> {
     match fs::read_to_string(source) {
         Ok(content) => return Ok(Scanner::new(content.as_str()).scan_tokens()?),
-        Err(_err) => return Err("Failed to read file!".to_string()),
+        Err(_) => return Err("Failed to read file!".to_string()),
     };
 }
 
@@ -40,7 +40,7 @@ impl<'a> Scanner<'a> {
         }
 
         self.tokens
-            .push(Token::new(TokenType::Eof, String::from(""), self.line));
+            .push(Token::new(TokenType::Eof, String::new(), self.line));
         Ok(self.tokens.clone())
     }
 

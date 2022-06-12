@@ -2,6 +2,7 @@ use crate::ast::Node;
 use crate::scanner;
 use crate::tokens::Token;
 use crate::tokens::TokenType;
+use std::iter::IntoIterator;
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -32,7 +33,7 @@ impl Parser {
     fn parse_logic_binary(&mut self) -> Result<Node, String> {
         let mut expr = self.parse_term()?;
 
-        while self.match_token(vec![
+        while self.match_token([
             TokenType::GreaterThan,
             TokenType::GreaterThanEqual,
             TokenType::LessThan,
@@ -57,7 +58,7 @@ impl Parser {
     fn parse_term(&mut self) -> Result<Node, String> {
         let mut expr = self.parse_factor()?;
 
-        while self.match_token(vec![TokenType::Plus, TokenType::Minus]) {
+        while self.match_token([TokenType::Plus, TokenType::Minus]) {
             let operator = self.previous().token_type;
             let right = self.parse_factor()?;
             expr = Node::BinaryExpr {
@@ -73,7 +74,7 @@ impl Parser {
     fn parse_factor(&mut self) -> Result<Node, String> {
         let mut expr = self.parse_power()?;
 
-        while self.match_token(vec![TokenType::Star, TokenType::Slash]) {
+        while self.match_token([TokenType::Star, TokenType::Slash]) {
             let operator = self.previous().token_type;
             let right = self.parse_power()?;
             expr = Node::BinaryExpr {
@@ -89,7 +90,7 @@ impl Parser {
     fn parse_power(&mut self) -> Result<Node, String> {
         let mut expr = self.parse_unary()?;
 
-        while self.match_token(vec![TokenType::Carrot]) {
+        while self.match_token([TokenType::Carrot]) {
             let operator = self.previous().token_type;
             let right = self.parse_unary()?;
             expr = Node::BinaryExpr {
@@ -103,7 +104,7 @@ impl Parser {
     }
 
     fn parse_unary(&mut self) -> Result<Node, String> {
-        while self.match_token(vec![TokenType::Minus, TokenType::Not]) {
+        while self.match_token([TokenType::Minus, TokenType::Not]) {
             let operator = self.previous().token_type;
             let expr = self.parse_unary()?;
             return Ok(Node::UnaryExpr {
@@ -155,8 +156,8 @@ impl Parser {
         ))
     }
 
-    fn match_token(&mut self, types: Vec<TokenType>) -> bool {
-        for token_type in types {
+    fn match_token<T: IntoIterator<Item = TokenType>>(&mut self, types: T) -> bool {
+        for token_type in types.into_iter() {
             if self.check(token_type) {
                 self.advance();
                 return true;
@@ -172,6 +173,7 @@ impl Parser {
         token_type == self.get_current().token_type
     }
 
+    #[inline]
     fn is_at_end(&self) -> bool {
         self.get_current().token_type == TokenType::Eof
     }
