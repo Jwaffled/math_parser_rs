@@ -1,5 +1,4 @@
 use std::fs;
-
 use crate::tokens::Token;
 use crate::tokens::TokenType;
 
@@ -13,20 +12,22 @@ pub struct Scanner<'a> {
 
 pub fn scan_from_file(source: &str) -> Result<Vec<Token>, String> {
     match fs::read_to_string(source) {
-        Ok(content) => return Ok(Scanner::new(content.as_str()).scan_tokens()?),
-        Err(_err) => return Err("Failed to read file!".to_string()),
-    };
+        Ok(content) => Scanner::new(content.as_str()).scan_tokens(),
+        Err(_) => Err("Failed to read file!".to_string()),
+    }
 }
 
+#[inline]
 pub fn scan_from_input(input: &str) -> Result<Vec<Token>, String> {
-    return Ok(Scanner::new(input).scan_tokens()?);
+    Scanner::new(input).scan_tokens()
 }
 
 impl<'a> Scanner<'a> {
+    #[inline]
     pub fn new(input: &'a str) -> Self {
-        Scanner {
+        Self {
             input,
-            tokens: vec![],
+            tokens: Vec::new(),
             start: 0,
             current: 0,
             line: 1,
@@ -40,7 +41,8 @@ impl<'a> Scanner<'a> {
         }
 
         self.tokens
-            .push(Token::new(TokenType::Eof, String::from(""), self.line));
+            .push(Token::new(TokenType::Eof, String::new(), self.line));
+        
         Ok(self.tokens.clone())
     }
 
@@ -55,9 +57,7 @@ impl<'a> Scanner<'a> {
             '*' => self.add_token(TokenType::Star),
             '/' => self.add_token(TokenType::Slash),
             '^' => self.add_token(TokenType::Carrot),
-            '.' => {
-                self.number()?;
-            }
+            '.' => self.number()?,
 
             '=' => {
                 if self.get_current() == '=' {
@@ -123,6 +123,7 @@ impl<'a> Scanner<'a> {
                 }
             }
         }
+        
         Ok(())
     }
 
@@ -132,7 +133,7 @@ impl<'a> Scanner<'a> {
         }
 
         self.add_token(TokenType::Identifier(
-            self.input[self.start..self.current].to_string(),
+            self.input[self.start..self.current].to_string()
         ))
     }
 
@@ -155,16 +156,18 @@ impl<'a> Scanner<'a> {
         match self.input[self.start..self.current].parse::<f64>() {
             Ok(num) => {
                 self.add_token(TokenType::Number(num));
-                return Ok(());
+                
+                Ok(())
             }
-            _ => return Err("Something went wrong when scanning number token.".to_string()),
-        };
+            
+            _ => Err("Something went wrong when scanning number token.".to_string()),
+        }
     }
 
     fn add_token(&mut self, token_type: TokenType) {
         let text: &str = &self.input[self.start..self.current];
         self.tokens
-            .push(Token::new(token_type, text.to_string(), self.line));
+            .push(Token::new(token_type, String::from(text), self.line));
     }
 
     fn get_current(&self) -> char {
